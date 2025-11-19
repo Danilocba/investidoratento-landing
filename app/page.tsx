@@ -77,13 +77,13 @@ export default function Home() {
               O painel de investimentos mais completo
               <br />
               <span className="text-blue-400">
-                para quem quer investir com clareza.
+                para quem quer investir com clareza
               </span>
             </h1>
 
             <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto">
               Organize, analise e acompanhe seus ativos com ferramentas
-              inteligentes, roadmap transparente e recursos exclusivos para
+              inteligentes, um roadmap transparente e recursos exclusivos pensados para
               investidores que querem dominar o próprio dinheiro.
             </p>
           </motion.div>
@@ -184,43 +184,52 @@ export default function Home() {
         )}
 
         {/* SEÇÃO: MVP */}
-        {!sending && !step1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-12"
-          >
-            <h2 className="text-3xl font-bold text-center mb-8">
-              O que você já recebe no acesso Beta
-            </h2>
+          {!sending && !step1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-12"
+            >
+              <h2 className="text-3xl font-bold text-center mb-8">
+                O que você já recebe no acesso Beta
+              </h2>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Acompanhamento Inteligente",
-                  desc: "Veja cotações, carteira e análises de forma simples e clara.",
-                },
-                {
-                  title: "Calendário Econômico",
-                  desc: "Entenda o impacto de cada evento no mercado brasileiro.",
-                },
-                {
-                  title: "Dashboard Moderno",
-                  desc: "Interface pensada para investidores iniciantes e avançados.",
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6"
-                >
-                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                  <p className="text-gray-400">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  {
+                    title: "Busca Inteligente de Ativos",
+                    desc: "Encontre qualquer ticker rapidamente, com sugestões em tempo real e navegação extremamente fluida.",
+                  },
+                  {
+                    title: "Páginas de Ativos e Índices",
+                    desc: "Veja preço, variação, gráficos simples e a composição dos principais índices — tudo de forma clara e objetiva.",
+                  },
+                  {
+                    title: "Interface Moderna",
+                    desc: "Experiência minimalista, rápida e pensada para investidores iniciantes e avançados.",
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="
+                      relative rounded-2xl p-6 
+                      bg-white/5 backdrop-blur-md border border-white/10
+                      overflow-hidden
+                      before:absolute before:inset-0 before:rounded-2xl 
+                      before:p-px before:bg-linear-to-br before:from-[#00ffa3]/40 before:to-[#00c6ff]/40
+                      before:opacity-0 hover:before:opacity-100 
+                      before:transition-opacity before:duration-300
+                      before:-z-10
+                    "
+                  >
+                    <h3 className="font-semibold text-lg mb-2 text-center">{item.title}</h3>
+                    <p className="text-gray-400 text-center">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
         {/* Rodapé */}
         <footer className="text-center mt-20 text-gray-500 text-sm">
