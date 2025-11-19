@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma";
 
-export default async function Confirmar({ searchParams }: any) {
+export default async function Confirmar({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+  // No Next 15/16, searchParams vem como objeto assíncrono => precisamos fazer await
   const params = await searchParams;
-  const token = params.token;
+  const tokenParam = params.token;
 
-  if (!token) {
+  // token pode vir como string ou array
+  const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
+
+  if (!token || typeof token !== "string") {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
         <p>Token inválido.</p>
@@ -12,7 +16,10 @@ export default async function Confirmar({ searchParams }: any) {
     );
   }
 
-  const lead = await prisma.lead.findUnique({ where: { token } });
+  // Busca no banco
+  const lead = await prisma.lead.findUnique({
+    where: { token },
+  });
 
   if (!lead) {
     return (
