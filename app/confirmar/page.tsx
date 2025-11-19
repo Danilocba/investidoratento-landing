@@ -1,11 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-type ConfirmarProps = {
-  searchParams: { token?: string };
-};
-
-export default async function Confirmar({ searchParams }: ConfirmarProps) {
-  const token = searchParams.token;
+export default async function Confirmar({ searchParams }: any) {
+  const params = await searchParams;
+  const token = params.token;
 
   if (!token) {
     return (
@@ -15,14 +12,12 @@ export default async function Confirmar({ searchParams }: ConfirmarProps) {
     );
   }
 
-  const lead = await prisma.lead.findUnique({
-    where: { token },
-  });
+  const lead = await prisma.lead.findUnique({ where: { token } });
 
   if (!lead) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        <p>Token não encontrado ou já utilizado.</p>
+        <p>Token não encontrado.</p>
       </main>
     );
   }
@@ -30,7 +25,7 @@ export default async function Confirmar({ searchParams }: ConfirmarProps) {
   if (lead.confirmed) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        <p>Este e-mail já foi confirmado anteriormente.</p>
+        <p>E-mail já confirmado!</p>
       </main>
     );
   }
@@ -38,7 +33,7 @@ export default async function Confirmar({ searchParams }: ConfirmarProps) {
   if (lead.tokenExp < new Date()) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        <p>Este link expirou. Inscreva-se novamente para receber um novo acesso.</p>
+        <p>Link expirado.</p>
       </main>
     );
   }
@@ -54,7 +49,7 @@ export default async function Confirmar({ searchParams }: ConfirmarProps) {
         <h1 className="text-3xl font-bold mb-4">
           🎉 Seus dividendos vão aumentar!
         </h1>
-        <p className="mb-2">Sua vaga no beta está confirmada.</p>
+        <p>Sua vaga no beta está confirmada.</p>
         <p>Agora você será avisado antes de todo mundo.</p>
       </div>
     </main>
