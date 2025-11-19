@@ -14,6 +14,7 @@ export default function Home() {
   const [sending, setSending] = useState(false);
   const [step1, setStep1] = useState(false);
   const [step2, setStep2] = useState(false);
+  const [stepEmail, setStepEmail] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,9 +39,7 @@ export default function Home() {
     // animação rápida + redirecionamento
     setTimeout(() => setStep1(true), 200);
     setTimeout(() => setStep2(true), 1200);
-    setTimeout(() => {
-      router.push("/sucesso");
-    }, 2300);
+    setTimeout(() => setStepEmail(true), 2400);
   }
 
   return (
@@ -163,6 +162,25 @@ export default function Home() {
             🎉 Você está a um passo de aumentar seus dividendos.
           </motion.p>
         )}
+
+          {stepEmail && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9 }}
+              className="text-center mt-12"
+            >
+              <h2 className="text-3xl font-bold mb-3">Verifique seu e-mail 📩</h2>
+
+              <p className="text-gray-300 max-w-xl mx-auto">
+                Enviamos um link para você confirmar sua vaga no beta do <b>Investidor Atento</b>.
+              </p>
+
+              <p className="text-gray-500 mt-2">
+                Se o e-mail não aparecer em alguns minutos, confira também a caixa de spam ou promoções.
+              </p>
+            </motion.div>
+          )}
 
         {/* Confetes */}
         {step2 && (
