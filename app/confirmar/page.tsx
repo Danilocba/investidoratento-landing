@@ -50,6 +50,14 @@ export default async function Confirmar({ searchParams }: { searchParams: { [key
     data: { confirmed: true },
   });
 
+      // GA — confirmação do e-mail
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "lead_confirmed", {
+        event_category: "lead",
+        event_label: "email_confirmed",
+      });
+    }
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-black text-white">
       <div className="text-center max-w-lg px-4">

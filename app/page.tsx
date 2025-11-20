@@ -20,6 +20,15 @@ export default function Home() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+
+    // Evento GA — lead enviado
+    if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "lead_submit", {
+        event_category: "lead",
+        event_label: "landing_form",
+        });
+      }
+      
     setSending(true);
 
     const form = new FormData(e.currentTarget);
