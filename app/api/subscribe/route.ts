@@ -18,7 +18,6 @@ function isRateLimited(ip: string, limit = 5, windowMs = 60_000) {
   }
 
   if (now - entry.first > windowMs) {
-    // janela expirou, reset
     requests.set(ip, { count: 1, first: now });
     return false;
   }
@@ -32,13 +31,20 @@ function isRateLimited(ip: string, limit = 5, windowMs = 60_000) {
   return false;
 }
 
-function isValidEmail(email: string) {
-  if (!email || email.length > 255) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 export async function POST(req: Request) {
   try {
+    // Proteção 1 - tamanho máximo do body
+    const contentLength = Number(req.headers.get("content-length") || 0);
+    if (contentLength > 5_000) {
+      return NextResponse.json({ error: "Payload muito grande." }, { status: 413 });
+    }
+
+    // Proteção 2 - user-agent suspeito
+    const ua = req.headers.get("user-agent") || "";
+    if (/curl|wget|python|scrapy|bot|spider/i.test(ua)) {
+      return NextResponse.json({ error: "Acesso não permitido." }, { status: 403 });
+    }
+
     const ip =
       req.headers.get("x-forwarded-for") ||
       req.headers.get("x-real-ip") ||
@@ -47,7 +53,7 @@ export async function POST(req: Request) {
     if (isRateLimited(ip)) {
       return NextResponse.json(
         { error: "Muitas requisições, tente novamente em instantes." },
-        { status: 429 },
+        { status: 429 }
       );
     }
 
@@ -60,56 +66,46 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Bot detectado" }, { status: 400 });
     }
 
-    const email = data.get("email")?.toString().trim() || "";
+    const rawEmail = data.get("email")?.toString().trim() || "";
+    const email = rawEmail.toLowerCase();
 
-    if (!isValidEmail(email)) {
+    // Log de tentativa suspeita
+    if (!email.includes("@")) {
+      console.warn("Tentativa suspeita:", { ip, ua, email: rawEmail });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: "E-mail inválido" }, { status: 400 });
     }
 
     const baseUrl =
       process.env.NEXT_PUBLIC_URL || new URL(req.url).origin;
 
-    // Gera token de confirmação e expiração (+7 dias)
     const token = crypto.randomBytes(24).toString("hex");
     const tokenExp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     const lead = await prisma.lead.upsert({
       where: { email },
-      update: {
-        token,
-        tokenExp,
-      },
-      create: {
-        email,
-        token,
-        tokenExp,
-      },
+      update: { token, tokenExp },
+      create: { email, token, tokenExp },
     });
 
     console.log("Lead salvo:", lead.email);
 
-    // Envia e-mail de confirmação
     await resend.emails.send({
       from: "Investidor Atento <no-reply@landing.investidoratento.com>",
       to: email,
       subject: "Confirme sua vaga no Beta do Investidor Atento 🚀",
       html: `
         <h2>Obrigado por se inscrever, investidor!</h2>
-        <p>Para confirmar sua vaga no beta do <b>Investidor Atento</b>, clique no link abaixo:</p>
-        <p>
-          <a href="${baseUrl}/confirmar?token=${lead.token}">
-            Confirmar minha vaga
-          </a>
-        </p>
-        <p>Se você não fez essa inscrição, pode ignorar este e-mail.</p>
-        <br />
-        <p>Atenciosamente,<br/>Equipe Investidor Atento</p>
+        <p>Clique abaixo para confirmar sua vaga no beta:</p>
+        <p><a href="${baseUrl}/confirmar?token=${lead.token}">Confirmar minha vaga</a></p>
+        <p>Se você não fez essa inscrição, ignore este e-mail.</p>
       `,
     });
 
-    // Resposta para o front
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Erro ao enviar e-mail:", err);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
