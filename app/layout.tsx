@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Investidor Atento — Beta",
-  description: "Painel premium para investidores.",
+  title: "Investidor Atento — Ferramentas inteligentes para investir com clareza",
+  description:
+    "A plataforma moderna para acompanhar ativos, buscar tickers, analisar índices e entender o mercado com simplicidade. Cadastro antecipado do Beta disponível.",
 };
 
 export default function RootLayout({

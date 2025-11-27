@@ -261,6 +261,15 @@ export default function Home() {
         {/* Rodapé */}
         <footer className="text-center mt-20 text-gray-500 text-sm">
           © {new Date().getFullYear()} Investidor Atento — Você de olho em tudo.
+          
+          <div className="mt-2">
+            <a 
+              href="/privacidade" 
+              className="text-gray-400 hover:text-gray-200 underline transition"
+            >
+              Política de Privacidade
+            </a>
+          </div>
         </footer>
       </div>
     </main>
