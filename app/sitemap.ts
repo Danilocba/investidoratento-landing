@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = "https://investidoratento.com";
+  const baseUrl = "https://investidoratento.com", ;
 
   return [
     {
